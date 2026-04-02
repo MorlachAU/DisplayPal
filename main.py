@@ -75,6 +75,7 @@ def main():
 
     pm.on_switch = on_switch
     pm.on_lock_change = lambda locked: tray._update_icon()
+    settings._on_profiles_changed = tray.refresh_profiles
     tray.start()
 
     # 8. Hotkeys

@@ -87,16 +87,29 @@ class SettingsWindow:
 
     def _build_profiles_tab(self, tab):
         self._profile_widgets = {}
+        self._profiles_tab = tab
 
-        # Profile selector
+        # Top row: profile selector + add/delete buttons
+        top = ctk.CTkFrame(tab, fg_color="transparent")
+        top.pack(padx=10, pady=(10, 0), fill="x")
+
+        self._selector_frame = ctk.CTkFrame(top, fg_color="transparent")
+        self._selector_frame.pack(side="left", fill="x", expand=True)
+
         names = self.pm.get_profile_names()
         self._selected_profile = ctk.StringVar(value=names[0] if names else "Work")
 
-        selector = ctk.CTkSegmentedButton(
-            tab, values=names, variable=self._selected_profile,
+        self._profile_selector = ctk.CTkSegmentedButton(
+            self._selector_frame, values=names, variable=self._selected_profile,
             command=self._on_profile_selected
         )
-        selector.pack(padx=10, pady=(10, 5), fill="x")
+        self._profile_selector.pack(fill="x")
+
+        btn_frame = ctk.CTkFrame(top, fg_color="transparent")
+        btn_frame.pack(side="right", padx=(5, 0))
+        ctk.CTkButton(btn_frame, text="+", width=30, command=self._add_profile).pack(side="left", padx=1)
+        ctk.CTkButton(btn_frame, text="-", width=30, fg_color="firebrick",
+                       command=self._delete_profile).pack(side="left", padx=1)
 
         # Brightness
         ctk.CTkLabel(tab, text="Brightness", anchor="w").pack(padx=15, pady=(10, 0), anchor="w")
@@ -195,6 +208,61 @@ class SettingsWindow:
             self.config.set_profile(name, dict(default_profile))
             self._on_profile_selected(name)
             self._profile_status.configure(text=f"Reverted {name} to defaults")
+
+    def _add_profile(self):
+        """Add a new custom profile via dialog."""
+        dialog = ctk.CTkInputDialog(text="Enter profile name:", title="New Profile")
+        name = dialog.get_input()
+        if not name or not name.strip():
+            return
+        name = name.strip()
+        # Check for duplicate
+        if self.config.get_profile(name):
+            self._profile_status.configure(text=f"Profile '{name}' already exists")
+            return
+        # Create with sensible defaults
+        new_profile = {"brightness": 70, "colour_temp": 6500, "hotkey": "", "refresh_rate": 0}
+        self.config.set_profile(name, new_profile)
+        self._rebuild_selector(name)
+        if self.hk:
+            self.hk.reload()
+        self._profile_status.configure(text=f"Created profile '{name}'")
+
+    def _delete_profile(self):
+        """Delete the selected profile."""
+        from config import DEFAULTS
+        name = self._selected_profile.get()
+        # Protect built-in profiles
+        if name in DEFAULTS.get("profiles", {}):
+            self._profile_status.configure(text=f"Cannot delete built-in profile '{name}'")
+            return
+        # Remove from config
+        profiles = self.config.get_all_profiles()
+        if name in profiles:
+            del profiles[name]
+            self.config.set("profiles", profiles)
+        # If active profile was deleted, switch to Work
+        if self.pm.get_active() == name:
+            self.pm.switch("Work", force=True)
+        # Rebuild selector
+        remaining = list(profiles.keys())
+        self._rebuild_selector(remaining[0] if remaining else "Work")
+        if self.hk:
+            self.hk.reload()
+        self._profile_status.configure(text=f"Deleted profile '{name}'")
+
+    def _rebuild_selector(self, select_name=None):
+        """Rebuild the profile selector with current profiles."""
+        names = self.pm.get_profile_names()
+        self._profile_selector.configure(values=names)
+        if select_name and select_name in names:
+            self._selected_profile.set(select_name)
+        elif names:
+            self._selected_profile.set(names[0])
+        self._on_profile_selected(self._selected_profile.get())
+        # Notify tray to rebuild its icons/menu
+        if hasattr(self, '_on_profiles_changed') and self._on_profiles_changed:
+            self._on_profiles_changed()
 
     def _apply_preview(self):
         """Preview current slider values without saving."""

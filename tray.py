@@ -82,19 +82,24 @@ class TrayApp:
         self._icon = None
         self._thread = None
 
-        # Pre-generate icons for each profile
+        # Generate icons for all profiles
         self._icons = {}
         self._icons_locked = {}
-        for name, colour in PROFILE_COLOURS.items():
-            self._icons[name] = _generate_icon(colour)
-            self._icons_locked[name] = _generate_icon(colour, locked=True)
         self._default_icon = _generate_icon(DEFAULT_COLOUR)
+        self._rebuild_icons()
 
-        # Generate icons for any profiles not in PROFILE_COLOURS
+    def _rebuild_icons(self):
+        """Regenerate icons for all current profiles."""
         for name in self.pm.get_profile_names():
             if name not in self._icons:
-                self._icons[name] = _generate_icon(DEFAULT_COLOUR)
-                self._icons_locked[name] = _generate_icon(DEFAULT_COLOUR, locked=True)
+                colour = PROFILE_COLOURS.get(name, DEFAULT_COLOUR)
+                self._icons[name] = _generate_icon(colour)
+                self._icons_locked[name] = _generate_icon(colour, locked=True)
+
+    def refresh_profiles(self):
+        """Called when profiles are added/removed. Rebuilds icons and updates menu."""
+        self._rebuild_icons()
+        self._update_icon()
 
     def _get_icon_for_profile(self, name):
         """Get the appropriate icon for a profile, considering lock state."""
