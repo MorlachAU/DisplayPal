@@ -30,6 +30,7 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 
 ### Automation
 - **App-aware profile switching** — Automatically detects games and switches to your Game profile. Uses four detection layers: Windows game registry, Steam/Epic library scanning, fullscreen detection, and DirectX/Vulkan DLL analysis. Works with any GPU (NVIDIA, AMD, Intel). Reverts when you close the game.
+- **Productivity app detection** — Recognises ~50 common productivity apps (Office suite, VS Code, Notepad++, browsers, Teams, Slack, terminals, design tools, and more) and can auto-switch to your preferred Work or Code profile.
 - **Custom app rules** — Map any application to any profile (e.g., VLC → Cinema, VS Code → Code)
 - **Global hotkeys** — Ctrl+Alt+1/2/3/4 for instant profile switching (configurable)
 - **Ambient mode** — Colour temperature gradually shifts throughout the day following the sun's position (warm at night, neutral at noon)
@@ -119,7 +120,7 @@ Right-click the tray icon and click **Settings** to open the configuration windo
 
 - **Profiles tab** — Adjust brightness, colour temperature, refresh rate, and hotkey for each profile. Use "Revert to Default" to reset a profile.
 - **Schedule tab** — Enable sunrise/sunset auto-switching (click "Detect" to set your location automatically) or add fixed time rules.
-- **Apps tab** — Configure app-aware switching. Auto-detects games, or add custom rules to map any app to a profile. Choose which profile games switch to.
+- **Apps tab** — Configure app-aware switching. Auto-detects games and productivity apps, or add custom rules to map any app to a profile. Choose which profile each category switches to.
 - **General tab** — Auto-start, notifications, ambient mode, transition speed, hotkey reference, and current status.
 - **Stats tab** — Visual bar charts showing time spent in each profile today and this week.
 
@@ -234,8 +235,8 @@ Yes. Press Ctrl+Alt+Shift+D for 5 seconds of rapidly cycling colour temperatures
 **How does game detection work?**
 Display Manager uses four detection methods that work with any GPU vendor (NVIDIA, AMD, Intel): (1) Windows GameConfigStore registry — the OS already tracks what it considers a game, (2) Steam and Epic library scanning for installed game executables, (3) fullscreen + borderless window detection, and (4) checking if the foreground process has DirectX or Vulkan rendering DLLs loaded. When a game is detected, it auto-switches to your chosen Game profile. When you close the game, it reverts to whatever profile was active before.
 
-**Can I make it switch profiles for non-game apps too?**
-Yes. Go to Settings > Apps and add custom rules. For example, map `vlc.exe` to Cinema or `Code.exe` to Code. Custom rules take priority over game detection.
+**Can it detect non-game apps too?**
+Yes. Enable "Detect productivity apps" in Settings > Apps and it will recognise ~50 common apps including Microsoft Office, VS Code, Notepad++, browsers, Teams, Slack, Discord, Zoom, terminals, design tools, and more. You can also add custom rules for any app not on the built-in list. Detection priority: Custom rules > Games > Productivity apps.
 
 **Does the app phone home or collect data?**
 No. Everything runs locally. The only network call is the optional one-click location detection (via ip-api.com) for setting up sunrise/sunset — and that only happens when you click "Detect" in Settings. Usage stats are stored locally in config.json and never leave your machine.
