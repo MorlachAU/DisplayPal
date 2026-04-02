@@ -260,10 +260,13 @@ class AppDetector:
     def start(self):
         """Start the detection thread."""
         self._stop_event.clear()
-        # Build game database in background
-        threading.Thread(target=build_known_games, daemon=True).start()
-        self._thread = threading.Thread(target=self._run_loop, daemon=True)
+        self._thread = threading.Thread(target=self._start_with_scan, daemon=True)
         self._thread.start()
+
+    def _start_with_scan(self):
+        """Build game database first, then run detection loop."""
+        build_known_games()
+        self._run_loop()
 
     def stop(self):
         self._stop_event.set()
