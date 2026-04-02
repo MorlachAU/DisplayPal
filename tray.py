@@ -117,12 +117,15 @@ class TrayApp:
             )
 
         lock_text = "Unlock Profile" if self.pm.is_locked() else "Lock Profile"
-        ambient_text = "Disable Ambient Mode" if self.config.get("ambient_mode", False) else "Enable Ambient Mode"
 
         return pystray.Menu(
             *profile_items,
+            pystray.MenuItem(
+                "Ambient",
+                self._on_ambient_click,
+                checked=lambda item: self.config.get("ambient_mode", False),
+            ),
             pystray.Menu.SEPARATOR,
-            pystray.MenuItem(ambient_text, self._on_ambient_click),
             pystray.MenuItem("PANIC! (Work mode)", self._on_panic_click),
             pystray.MenuItem(lock_text, self._on_lock_click),
             pystray.MenuItem("Disco Mode", self._on_disco_click),
@@ -140,9 +143,13 @@ class TrayApp:
         return handler
 
     def _on_ambient_click(self, icon, item):
-        """Toggle ambient mode on/off."""
+        """Toggle ambient mode on/off. Enabling unlocks the profile so it can adjust."""
         current = self.config.get("ambient_mode", False)
         self.config.set("ambient_mode", not current)
+        if not current:
+            # Turning ambient ON — unlock so it can adjust freely
+            self.config.set("profile_lock", False)
+            self._update_icon()
 
     def _on_panic_click(self, icon, item):
         """PANIC! Instantly switch to Work and close settings."""
