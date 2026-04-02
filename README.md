@@ -21,8 +21,8 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 
 ### Core
 - **Four display profiles** — Work, Code, Game, and Cinema, each with independent settings
-- **Multi-monitor support** — Automatically detects and controls all DDC/CI monitors
-- **Brightness control** — DDC/CI hardware backlight adjustment (not software dimming)
+- **Multi-monitor support** — Automatically detects and controls all connected displays
+- **Brightness control** — Hardware backlight adjustment via DDC/CI (external monitors) and WMI (laptop screens)
 - **Colour temperature** — Direct gamma ramp control from 1200K (warm amber) to 6500K (neutral daylight)
 - **Refresh rate switching** — Change monitor refresh rate per profile (e.g., 60Hz for work, 100Hz+ for gaming)
 - **System tray app** — Minimal footprint, always one click away
@@ -53,9 +53,8 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 ## Requirements
 
 - **Windows 10 or 11**
-- A monitor that supports **DDC/CI** (most external monitors made after 2010)
-  - DDC/CI must be enabled in your monitor's OSD settings
-  - Laptop built-in screens typically do not support DDC/CI
+- Works on **laptops** (built-in screen via WMI) and **external monitors** (via DDC/CI)
+  - For external monitors, DDC/CI must be enabled in the monitor's OSD settings
 - **f.lux must be closed** if installed — Display Manager replaces f.lux for colour temperature control
 
 ---
@@ -159,7 +158,7 @@ All values are fully customisable per profile.
 
 | Feature | Technology |
 |---------|-----------|
-| Brightness | DDC/CI via [monitorcontrol](https://github.com/newAM/monitorcontrol) — hardware backlight, not software overlay |
+| Brightness | [screen-brightness-control](https://github.com/Crozzers/screen-brightness-control) — DDC/CI for external monitors, WMI for laptops |
 | Colour temperature | Win32 `SetDeviceGammaRamp` — same technique f.lux uses internally |
 | Refresh rate | Win32 `ChangeDisplaySettingsW` — system-level display mode change |
 | Sunrise/sunset | [astral](https://github.com/sffjunkie/astral) library — offline calculation, no internet needed after location is set |
@@ -177,10 +176,9 @@ Settings are stored in `config.json` alongside the executable (or `main.py` if r
 
 ## Troubleshooting
 
-**"No DDC/CI monitor found"**
-- Check that DDC/CI is enabled in your monitor's OSD (on-screen display) settings
-- Laptop screens don't support DDC/CI — this app is designed for external monitors
-- Try a different cable — some cheap HDMI cables don't carry DDC/CI signals
+**"No displays found" or brightness not changing**
+- **External monitors:** Check that DDC/CI is enabled in your monitor's OSD settings. Try a different cable — some cheap HDMI cables don't carry DDC/CI signals.
+- **Laptops:** Brightness control uses WMI which works on most laptops. If it doesn't work, check your display driver is up to date.
 
 **Colour temperature reverts immediately**
 - f.lux is probably running — close it. Both apps write the same gamma ramp and will fight each other.

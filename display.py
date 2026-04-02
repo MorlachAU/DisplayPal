@@ -106,80 +106,76 @@ def reset_colour_temperature():
 
 
 # ============================================================
-# DDC/CI Brightness via monitorcontrol (multi-monitor)
+# Brightness via screen_brightness_control (laptop + DDC/CI)
 # ============================================================
 
-_cached_monitors = None
+_cached_displays = None
 _monitor_lock = threading.Lock()
 
 
-def _get_working_monitors():
-    """Find and cache all responding DDC/CI monitors."""
-    global _cached_monitors
+def _get_displays():
+    """Find and cache all available displays (laptop + external)."""
+    global _cached_displays
     with _monitor_lock:
-        if _cached_monitors is not None:
-            return _cached_monitors
-        found = []
+        if _cached_displays is not None:
+            return _cached_displays
         try:
-            from monitorcontrol import get_monitors
-            monitors = get_monitors()
-            for monitor in monitors:
-                try:
-                    with monitor:
-                        monitor.get_luminance()
-                    found.append(monitor)
-                except Exception:
-                    continue
+            import screen_brightness_control as sbc
+            _cached_displays = sbc.list_monitors()
         except Exception:
-            pass
-        _cached_monitors = found
-        return found
+            _cached_displays = []
+        return _cached_displays
 
 
 def get_monitor_count():
-    """Return number of responding DDC/CI monitors."""
-    return len(_get_working_monitors())
+    """Return number of detected displays."""
+    return len(_get_displays())
 
 
 def get_brightness(monitor_index=None):
     """Read current brightness (0-100). Returns None on failure.
-    If monitor_index is None, reads from the first monitor."""
-    monitors = _get_working_monitors()
-    if not monitors:
-        return None
-    if monitor_index is not None:
-        if monitor_index >= len(monitors):
-            return None
-        targets = [monitors[monitor_index]]
-    else:
-        targets = [monitors[0]]
+    Works on both laptop screens (WMI) and external monitors (DDC/CI)."""
     try:
-        with targets[0]:
-            return targets[0].get_luminance()
+        import screen_brightness_control as sbc
+        displays = _get_displays()
+        if not displays:
+            return None
+        if monitor_index is not None and monitor_index < len(displays):
+            result = sbc.get_brightness(display=displays[monitor_index])
+        else:
+            result = sbc.get_brightness(display=displays[0])
+        # sbc returns a list, take first value
+        if isinstance(result, list):
+            return result[0] if result else None
+        return result
     except Exception:
         return None
 
 
 def set_brightness(value, monitor_index=None):
-    """Set brightness (0-100). If monitor_index is None, sets all monitors."""
+    """Set brightness (0-100). If monitor_index is None, sets all displays.
+    Works on both laptop screens (WMI) and external monitors (DDC/CI)."""
     value = max(0, min(100, value))
-    monitors = _get_working_monitors()
-    if not monitors:
+    try:
+        import screen_brightness_control as sbc
+        displays = _get_displays()
+        if not displays:
+            return False
+        if monitor_index is not None:
+            if monitor_index < len(displays):
+                sbc.set_brightness(value, display=displays[monitor_index])
+            else:
+                return False
+        else:
+            for d in displays:
+                try:
+                    sbc.set_brightness(value, display=d)
+                    time.sleep(0.02)
+                except Exception:
+                    pass
+        return True
+    except Exception:
         return False
-    if monitor_index is not None:
-        targets = [monitors[monitor_index]] if monitor_index < len(monitors) else []
-    else:
-        targets = monitors
-    success = False
-    for monitor in targets:
-        try:
-            with monitor:
-                monitor.set_luminance(value)
-            success = True
-            time.sleep(0.02)
-        except Exception:
-            pass
-    return success
 
 
 # ============================================================
@@ -214,16 +210,14 @@ def apply_profile(brightness, colour_temp, transition_ms=0):
 
 
 def check_ddc_available():
-    """Check if DDC/CI is available. Returns (available, message)."""
-    monitor = _get_working_monitor()
-    if monitor is None:
-        return False, "No DDC/CI monitor found. Check DDC/CI is enabled in your monitor OSD settings."
-    try:
-        with monitor:
-            brightness = monitor.get_luminance()
-        return True, f"DDC/CI working. Current brightness: {brightness}%"
-    except Exception as e:
-        return False, f"DDC/CI error: {e}"
+    """Check if brightness control is available. Returns (available, message)."""
+    displays = _get_displays()
+    if not displays:
+        return False, "No displays found. Check DDC/CI is enabled in your monitor OSD settings."
+    brightness = get_brightness()
+    if brightness is not None:
+        return True, f"Brightness control working ({len(displays)} display(s)). Current: {brightness}%"
+    return False, "Displays detected but brightness control failed."
 
 
 # ============================================================
