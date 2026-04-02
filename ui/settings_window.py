@@ -64,7 +64,7 @@ class SettingsWindow:
         """Build the settings window."""
         self._window = ctk.CTkToplevel(self._root)
         self._window.title("Display Manager — Settings")
-        self._window.geometry("520x620")
+        self._window.geometry("550x640")
         self._window.resizable(False, False)
         self._window.attributes("-topmost", True)
         self._window.after(200, lambda: self._window.attributes("-topmost", False))
@@ -80,6 +80,7 @@ class SettingsWindow:
 
         self._build_profiles_tab(tabs.add("Profiles"))
         self._build_schedule_tab(tabs.add("Schedule"))
+        self._build_apps_tab(tabs.add("Apps"))
         self._build_general_tab(tabs.add("General"))
         self._build_stats_tab(tabs.add("Stats"))
 
@@ -511,6 +512,105 @@ class SettingsWindow:
         if self.sm:
             self.sm.reload()
         self._schedule_status.configure(text=f"Saved {len(rules)} rule(s)")
+
+    # ── General Tab ────────────────────────────────────────
+
+    # ── Apps Tab ────────────────────────────────────────────
+
+    def _build_apps_tab(self, tab):
+        # App-aware toggle
+        self._app_aware_var = ctk.BooleanVar(value=self.config.get("app_aware_enabled", True))
+        ctk.CTkSwitch(
+            tab, text="Enable app-aware profile switching",
+            variable=self._app_aware_var,
+            command=lambda: self.config.set("app_aware_enabled", self._app_aware_var.get())
+        ).pack(padx=15, pady=(10, 2), anchor="w")
+
+        ctk.CTkLabel(tab, text="Automatically detects games and switches profiles.\n"
+                      "Games are detected via Windows, Steam, Epic, fullscreen, and DirectX.",
+                      text_color="gray", justify="left", font=ctk.CTkFont(size=11)).pack(padx=20, pady=(0, 5), anchor="w")
+
+        # Game detection profile
+        gf = ctk.CTkFrame(tab, fg_color="transparent")
+        gf.pack(padx=10, fill="x", pady=(0, 5))
+        ctk.CTkLabel(gf, text="When a game is detected, switch to:").pack(side="left", padx=5)
+        self._game_profile_var = ctk.StringVar(value=self.config.get("game_detect_profile", "Game"))
+        ctk.CTkOptionMenu(gf, values=self.pm.get_profile_names(),
+                           variable=self._game_profile_var, width=120,
+                           command=lambda v: self.config.set("game_detect_profile", v)).pack(side="left", padx=5)
+
+        # Custom app rules
+        ctk.CTkLabel(tab, text="Custom App Rules", anchor="w",
+                      font=ctk.CTkFont(weight="bold")).pack(padx=15, pady=(5, 2), anchor="w")
+        ctk.CTkLabel(tab, text="Map specific apps to profiles (e.g., vlc.exe to Cinema)",
+                      text_color="gray", font=ctk.CTkFont(size=11)).pack(padx=20, anchor="w")
+
+        self._app_rules_frame = ctk.CTkScrollableFrame(tab, height=150)
+        self._app_rules_frame.pack(padx=10, pady=5, fill="both", expand=True)
+
+        self._app_rule_widgets = []
+        rules = self.config.get("app_rules", [])
+        for rule in rules:
+            self._add_app_rule_row(rule.get("exe", ""), rule.get("profile", "Work"))
+
+        btnf = ctk.CTkFrame(tab, fg_color="transparent")
+        btnf.pack(padx=10, pady=2, fill="x")
+        ctk.CTkButton(btnf, text="+ Add Rule", width=100,
+                       command=lambda: self._add_app_rule_row("", "Work")).pack(side="left", padx=5)
+        ctk.CTkButton(btnf, text="Save Rules", width=100,
+                       command=self._save_app_rules).pack(side="left", padx=5)
+
+        self._app_rules_status = ctk.CTkLabel(tab, text="", text_color="gray")
+        self._app_rules_status.pack(padx=15, anchor="w")
+
+        # Game database info
+        def show_game_count():
+            from appdetect import _known_game_exes, _games_scanned
+            if _games_scanned:
+                self._app_rules_status.configure(
+                    text=f"Known games database: {len(_known_game_exes)} game(s) detected")
+            else:
+                self._app_rules_status.configure(text="Game database still loading...")
+
+        ctk.CTkButton(tab, text="Show Detected Games Count", width=180,
+                       command=show_game_count).pack(padx=10, pady=(2, 5), anchor="w")
+
+    def _add_app_rule_row(self, exe_name, profile_name):
+        """Add an app rule row."""
+        row = ctk.CTkFrame(self._app_rules_frame, fg_color="transparent")
+        row.pack(fill="x", padx=5, pady=2)
+
+        exe_var = ctk.StringVar(value=exe_name)
+        ctk.CTkEntry(row, textvariable=exe_var, width=180,
+                      placeholder_text="app.exe").pack(side="left", padx=5)
+
+        profile_var = ctk.StringVar(value=profile_name)
+        names = self.pm.get_profile_names()
+        ctk.CTkOptionMenu(row, values=names, variable=profile_var,
+                           width=120).pack(side="left", padx=5)
+
+        def remove():
+            row.destroy()
+            self._app_rule_widgets = [(e, p, r) for e, p, r in self._app_rule_widgets if r != row]
+
+        ctk.CTkButton(row, text="X", width=30, fg_color="firebrick",
+                       command=remove).pack(side="left", padx=5)
+
+        self._app_rule_widgets.append((exe_var, profile_var, row))
+
+    def _save_app_rules(self):
+        """Save app rules to config."""
+        rules = []
+        for exe_var, profile_var, row in self._app_rule_widgets:
+            if row.winfo_exists():
+                exe = exe_var.get().strip()
+                profile = profile_var.get()
+                if exe and profile:
+                    rules.append({"exe": exe, "profile": profile})
+        self.config.set("app_rules", rules)
+        if hasattr(self, '_app_detector') and self._app_detector:
+            self._app_detector.reload()
+        self._app_rules_status.configure(text=f"Saved {len(rules)} rule(s)")
 
     # ── General Tab ────────────────────────────────────────
 

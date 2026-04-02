@@ -37,6 +37,9 @@ DEFAULTS = {
         "sunrise_profile": "Work",
         "sunset_profile": "Code",
     },
+    "app_aware_enabled": True,
+    "game_detect_profile": "Game",
+    "app_rules": [],
     "stats": {},
 }
 

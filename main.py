@@ -19,6 +19,7 @@ from hotkeys import HotkeyManager
 from scheduler import ScheduleManager
 from ui.settings_window import SettingsWindow
 from stats import StatsTracker
+from appdetect import AppDetector
 import autostart
 
 
@@ -58,6 +59,7 @@ def main():
     # 6. Quit handler
     def quit_app():
         watchdog_stop.set()
+        appdet.stop()
         stats.stop()
         hk.stop()
         sm.stop()
@@ -88,7 +90,12 @@ def main():
     sm.start()
     settings.sm = sm
 
-    # 10. Watchdog thread (monitor wake recovery)
+    # 10. App-aware detection
+    appdet = AppDetector(config, pm)
+    appdet.start()
+    settings._app_detector = appdet
+
+    # 11. Watchdog thread (monitor wake recovery)
     watchdog = threading.Thread(target=_run_watchdog, args=(pm, watchdog_stop), daemon=True)
     watchdog.start()
 
@@ -112,6 +119,7 @@ def main():
 
     # Cleanup after mainloop exits
     watchdog_stop.set()
+    appdet.stop()
     stats.stop()
     hk.stop()
     sm.stop()
