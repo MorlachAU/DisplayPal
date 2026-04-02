@@ -129,8 +129,9 @@ Right-click the tray icon and click **Settings** to open the configuration windo
 - **Profiles tab** — Adjust brightness, colour temperature, refresh rate, and hotkey for each profile. Use "Revert to Default" to reset a profile.
 - **Schedule tab** — Enable sunrise/sunset auto-switching (click "Detect" to set your location automatically) or add fixed time rules.
 - **Apps tab** — Configure app-aware switching. Auto-detects games and productivity apps, or add custom rules to map any app to a profile. Choose which profile each category switches to.
-- **General tab** — Auto-start, notifications, ambient mode, transition speed, hotkey reference, and current status.
+- **General tab** — Auto-start, notifications, ambient mode, language, transition speed, hotkey reference, and current status.
 - **Stats tab** — Visual bar charts showing time spent in each profile today and this week.
+- **About tab** — App version, MouseWheel Digital branding, feedback email, Buy Me a Coffee link, and GitHub link.
 
 ### Profile Lock (Auto-Lock)
 
