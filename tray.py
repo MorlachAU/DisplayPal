@@ -219,10 +219,15 @@ class TrayApp:
         return f"Display Manager - {profile_name}{locked}"
 
     def update_tooltip(self, profile_name):
-        """Update tray tooltip and icon when profile changes."""
+        """Update tray tooltip, icon, and force menu refresh when profile changes."""
         if self._icon:
             self._icon.title = self._build_title(profile_name)
             self._icon.icon = self._get_icon_for_profile(profile_name)
+            # Force menu to rebuild with correct checkmarks
+            try:
+                self._icon.update_menu()
+            except Exception:
+                pass
             # Show notification toast
             if self.config.get("notifications_enabled", True):
                 try:
@@ -239,3 +244,7 @@ class TrayApp:
             active = self.pm.get_active()
             self._icon.title = self._build_title(active)
             self._icon.icon = self._get_icon_for_profile(active)
+            try:
+                self._icon.update_menu()
+            except Exception:
+                pass
