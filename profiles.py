@@ -37,9 +37,11 @@ class ProfileManager:
 
             success = display.apply_profile(brightness, colour_temp, transition_ms)
 
-            # Apply refresh rate if specified (0 = don't change)
+            # Apply refresh rate only if different from current (0 = don't change)
             if refresh_rate > 0:
-                display.set_refresh_rate(refresh_rate)
+                current_rate = display.get_refresh_rate()
+                if current_rate != refresh_rate:
+                    display.set_refresh_rate(refresh_rate)
 
             if success:
                 self.config.set_active_profile(profile_name)

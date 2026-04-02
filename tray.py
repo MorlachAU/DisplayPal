@@ -15,53 +15,59 @@ PROFILE_COLOURS = {
     "Game": (50, 200, 80),     # Green
 }
 DEFAULT_COLOUR = (100, 180, 255)
-LOCK_COLOUR = (200, 50, 50)  # Red tint when locked
+LOCK_COLOUR = (220, 50, 50)
+
+# Cache the MouseWheel logo
+_logo_cache = {}
+
+
+def _load_logo(size):
+    """Load and cache the MouseWheel logo at a given size."""
+    if size in _logo_cache:
+        return _logo_cache[size]
+    logo_path = Path(__file__).parent / "assets" / "mousewheel_logo.png"
+    if logo_path.exists():
+        logo = Image.open(str(logo_path)).convert("RGBA")
+        # Fit logo into the icon area (with padding for the ring)
+        logo_size = int(size * 0.6)
+        logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+        _logo_cache[size] = logo
+        return logo
+    return None
 
 
 def _generate_icon(colour, size=64, locked=False):
-    """Generate a tray icon with the given colour."""
+    """Generate a tray icon with coloured ring and MouseWheel logo."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # Background circle
-    margin = size // 8
+    # Coloured ring background
+    margin = size // 16
+    ring_width = max(3, size // 10)
     draw.ellipse([margin, margin, size - margin, size - margin],
                  fill=colour + (255,))
 
-    # Monitor outline in center
-    mx = size * 0.28
-    my = size * 0.26
-    mw = size * 0.44
-    mh = size * 0.32
-    draw.rounded_rectangle(
-        [mx, my, mx + mw, my + mh],
-        radius=max(1, size // 20),
-        outline=(255, 255, 255, 200),
-        width=max(1, size // 20)
-    )
+    # Dark inner circle (logo background)
+    inner_margin = margin + ring_width
+    draw.ellipse([inner_margin, inner_margin,
+                  size - inner_margin, size - inner_margin],
+                 fill=(20, 25, 35, 255))
 
-    # Screen fill
-    pad = max(1, size // 25)
-    draw.rectangle(
-        [mx + pad, my + pad, mx + mw - pad, my + mh - pad],
-        fill=(255, 255, 255, 80)
-    )
+    # Paste MouseWheel logo in center
+    logo = _load_logo(size)
+    if logo:
+        lx = (size - logo.width) // 2
+        ly = (size - logo.height) // 2
+        img.paste(logo, (lx, ly), logo)
 
-    # Stand
-    cx = size // 2
-    stand_top = my + mh
-    draw.rectangle(
-        [cx - size * 0.04, stand_top, cx + size * 0.04, stand_top + size * 0.06],
-        fill=(255, 255, 255, 200)
-    )
-
-    # Lock indicator (small dot in bottom-right)
+    # Lock indicator (small red dot in bottom-right)
     if locked:
-        lr = size * 0.12
-        lx = size - margin - lr
-        ly = size - margin - lr
+        lr = size * 0.14
+        lx = size - margin - lr * 1.5
+        ly = size - margin - lr * 1.5
         draw.ellipse([lx, ly, lx + lr * 2, ly + lr * 2],
-                     fill=LOCK_COLOUR + (255,))
+                     fill=LOCK_COLOUR + (255,),
+                     outline=(255, 255, 255, 200), width=max(1, size // 32))
 
     return img
 

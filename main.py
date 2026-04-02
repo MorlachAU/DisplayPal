@@ -110,15 +110,32 @@ def _first_run_dialog(root, config):
 
     dialog = ctk.CTkToplevel(root)
     dialog.title("Display Manager — Welcome")
-    dialog.geometry("460x400")
+    dialog.geometry("460x440")
     dialog.resizable(False, False)
     dialog.attributes("-topmost", True)
 
-    ctk.CTkLabel(dialog, text="Welcome to Display Manager",
-                  font=ctk.CTkFont(size=18, weight="bold")).pack(padx=20, pady=(15, 5))
+    # Branding header
+    from PIL import Image, ImageTk
+    header = ctk.CTkFrame(dialog, fg_color="transparent")
+    header.pack(padx=20, pady=(15, 0))
+    try:
+        logo_path = Path(__file__).parent / "assets" / "mousewheel_logo.png"
+        if logo_path.exists():
+            logo = Image.open(str(logo_path)).convert("RGBA")
+            logo = logo.resize((48, 48), Image.LANCZOS)
+            dialog._logo_img = ImageTk.PhotoImage(logo)
+            ctk.CTkLabel(header, image=dialog._logo_img, text="").pack(side="left", padx=(0, 12))
+    except Exception:
+        pass
+    title_frame = ctk.CTkFrame(header, fg_color="transparent")
+    title_frame.pack(side="left")
+    ctk.CTkLabel(title_frame, text="Display Manager",
+                  font=ctk.CTkFont(size=18, weight="bold")).pack(anchor="w")
+    ctk.CTkLabel(title_frame, text="by MouseWheel Digital",
+                  text_color="gray", font=ctk.CTkFont(size=12)).pack(anchor="w")
 
     ctk.CTkLabel(dialog, text="Running system checks...",
-                  text_color="gray").pack(padx=20, pady=(0, 10))
+                  text_color="gray").pack(padx=20, pady=(8, 8))
 
     results_frame = ctk.CTkFrame(dialog)
     results_frame.pack(padx=15, pady=5, fill="both", expand=True)
@@ -178,13 +195,16 @@ def _first_run_dialog(root, config):
 
     ctk.CTkLabel(dialog, text="Tip: Right-click the tray icon to switch profiles\n"
                   "or press Ctrl+Alt+1/2/3 for quick switching.",
-                  text_color="gray", justify="center").pack(padx=20, pady=(5, 5))
+                  text_color="gray", justify="center").pack(padx=20, pady=(5, 2))
 
     def close():
         config.set("first_run_complete", True)
         dialog.destroy()
 
-    ctk.CTkButton(dialog, text="Got it!", width=120, command=close).pack(pady=(5, 15))
+    ctk.CTkButton(dialog, text="Got it!", width=120, command=close).pack(pady=(5, 5))
+
+    ctk.CTkLabel(dialog, text="mousewheeldigital.com",
+                  text_color="gray", font=ctk.CTkFont(size=10)).pack(pady=(0, 10))
 
 
 if __name__ == "__main__":

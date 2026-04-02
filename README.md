@@ -169,6 +169,12 @@ Settings are stored in `config.json` alongside the executable (or `main.py` if r
 
 ---
 
+## FYI
+
+**Brief screen flash when switching refresh rates** — If your profiles use different refresh rates (e.g., 60Hz for Work, 100Hz for Game), you may see a brief black screen when switching between them. This is normal — Windows performs a full display mode change when the refresh rate changes, which momentarily blanks the screen. Switching between profiles with the same refresh rate (e.g., Work to Code) is instant with no flash.
+
+---
+
 ## Building from Source
 
 To create a standalone executable:

@@ -32,6 +32,25 @@ class SettingsWindow:
         if self._root:
             self._root.after(0, self._create_or_focus)
 
+    def _load_header_logo(self, parent):
+        """Load MouseWheel Digital logo into the settings header."""
+        from pathlib import Path
+        from PIL import Image, ImageTk
+        logo_path = Path(__file__).parent.parent / "assets" / "mousewheel_logo.png"
+        try:
+            if logo_path.exists():
+                logo = Image.open(str(logo_path)).convert("RGBA")
+                logo = logo.resize((32, 32), Image.LANCZOS)
+                self._header_logo_img = ImageTk.PhotoImage(logo)
+                ctk.CTkLabel(parent, image=self._header_logo_img, text="").pack(side="left", padx=(5, 8))
+            ctk.CTkLabel(parent, text="Display Manager",
+                          font=ctk.CTkFont(size=16, weight="bold")).pack(side="left")
+            ctk.CTkLabel(parent, text="by MouseWheel Digital",
+                          text_color="gray", font=ctk.CTkFont(size=11)).pack(side="left", padx=(8, 0))
+        except Exception:
+            ctk.CTkLabel(parent, text="Display Manager",
+                          font=ctk.CTkFont(size=16, weight="bold")).pack(side="left", padx=5)
+
     def _create_or_focus(self):
         """Create the settings window or focus it if already open."""
         if self._window and self._window.winfo_exists():
@@ -44,14 +63,19 @@ class SettingsWindow:
         """Build the settings window."""
         self._window = ctk.CTkToplevel(self._root)
         self._window.title("Display Manager — Settings")
-        self._window.geometry("520x580")
+        self._window.geometry("520x620")
         self._window.resizable(False, False)
         self._window.attributes("-topmost", True)
         self._window.after(200, lambda: self._window.attributes("-topmost", False))
 
+        # Branding header
+        header = ctk.CTkFrame(self._window, height=40, fg_color="transparent")
+        header.pack(padx=10, pady=(8, 0), fill="x")
+        self._load_header_logo(header)
+
         # Tabs
         tabs = ctk.CTkTabview(self._window, width=490, height=430)
-        tabs.pack(padx=10, pady=10, fill="both", expand=True)
+        tabs.pack(padx=10, pady=(0, 10), fill="both", expand=True)
 
         self._build_profiles_tab(tabs.add("Profiles"))
         self._build_schedule_tab(tabs.add("Schedule"))
@@ -454,9 +478,10 @@ class SettingsWindow:
                        command=self._refresh_status).pack(padx=10, pady=5, anchor="w")
 
         # Version
-        ctk.CTkLabel(tab, text="Display Manager v1.0", text_color="gray").pack(
-            padx=15, pady=(5, 5), anchor="w"
-        )
+        ctk.CTkLabel(tab, text="Display Manager v1.0 — MouseWheel Digital",
+                      text_color="gray").pack(padx=15, pady=(5, 5), anchor="w")
+        ctk.CTkLabel(tab, text="mousewheeldigital.com", text_color="gray",
+                      font=ctk.CTkFont(size=11)).pack(padx=15, anchor="w")
 
     def _on_autostart_toggle(self):
         enabled = self._autostart_var.get()
