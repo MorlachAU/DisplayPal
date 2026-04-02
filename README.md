@@ -1,12 +1,19 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Display Manager by MouseWheel Digital" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Platform-Windows%2010%2F11-blue" alt="Platform">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/MouseWheel_Digital-Product-00c8a0" alt="MouseWheel Digital">
+</p>
+
 # Display Manager
 
 A Windows system tray application that manages display brightness, colour temperature, and refresh rate across switchable profiles. Think of it as a smart display profile manager — set up your preferred screen settings for different activities and switch between them instantly.
 
 Built for anyone who switches between work, coding, and gaming on the same monitor and wants their display to adapt automatically.
-
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
@@ -181,6 +188,12 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-## Credits
-
-Built with the assistance of [Claude Code](https://claude.ai/code) by Anthropic.
+<p align="center">
+  <img src="assets/mousewheel_logo.png" alt="MouseWheel Digital" width="80">
+  <br>
+  <strong>A <a href="https://www.mousewheeldigital.com/">MouseWheel Digital</a> product</strong>
+  <br>
+  <em>Digital products. Built with purpose.</em>
+  <br><br>
+  Built with the assistance of <a href="https://claude.ai/code">Claude Code</a> by Anthropic.
+</p>
