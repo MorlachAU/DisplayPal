@@ -21,6 +21,7 @@ from scheduler import ScheduleManager
 from ui.settings_window import SettingsWindow
 from stats import StatsTracker
 from appdetect import AppDetector
+from updater import check_for_update
 import autostart
 
 
@@ -118,7 +119,14 @@ def main():
     if not config.get("first_run_complete", False):
         root.after(500, lambda: _first_run_dialog(root, config))
 
-    # 14. Main loop (blocks until quit)
+    # 14. Check for updates
+    def on_update_check(version, url):
+        if version and url:
+            root.after(0, lambda: _show_update_notification(root, tray, version, url))
+
+    check_for_update(on_update_check)
+
+    # 15. Main loop (blocks until quit)
     root.mainloop()
 
     # Cleanup after mainloop exits
@@ -128,6 +136,40 @@ def main():
     hk.stop()
     sm.stop()
     display.reset_colour_temperature()
+
+
+def _show_update_notification(root, tray, version, url):
+    """Show update available notification via tray and optional dialog."""
+    import customtkinter as ctk
+    import webbrowser
+
+    # Tray notification
+    try:
+        tray._icon.notify(
+            f"Version {version} is available",
+            "Display Manager Update"
+        )
+    except Exception:
+        pass
+
+    # Small dialog
+    dialog = ctk.CTkToplevel(root)
+    dialog.title("Update Available")
+    dialog.geometry("360x150")
+    dialog.resizable(False, False)
+    dialog.attributes("-topmost", True)
+
+    ctk.CTkLabel(dialog, text="Update Available",
+                  font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(15, 5))
+    ctk.CTkLabel(dialog, text=f"Display Manager {version} is available.\nYou are running v1.0.",
+                  text_color="gray").pack(pady=(0, 10))
+
+    btnf = ctk.CTkFrame(dialog, fg_color="transparent")
+    btnf.pack(pady=5)
+    ctk.CTkButton(btnf, text="Download", width=100,
+                   command=lambda: (webbrowser.open(url), dialog.destroy())).pack(side="left", padx=5)
+    ctk.CTkButton(btnf, text="Later", width=80, fg_color="gray30",
+                   command=dialog.destroy).pack(side="left", padx=5)
 
 
 def _first_run_dialog(root, config):
