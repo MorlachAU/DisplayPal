@@ -16,11 +16,21 @@ class ProfileManager:
 
     def switch(self, profile_name, force=False):
         """Switch to a named profile. Returns True on success.
-        If profile lock is active and force=False, the switch is blocked."""
+        force=True for manual switches (hotkey/tray) — also auto-locks.
+        force=False for scheduled/ambient switches — blocked by lock."""
         with self._lock:
             # Check profile lock (force bypasses it — used by manual switches)
             if not force and self.config.get("profile_lock", False):
                 return False
+
+            # Manual switch auto-locks
+            if force and not self.config.get("profile_lock", False):
+                self.config.set("profile_lock", True)
+                if self.on_lock_change:
+                    try:
+                        self.on_lock_change(True)
+                    except Exception:
+                        pass
 
             profile = self.config.get_profile(profile_name)
             if profile is None:
