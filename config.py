@@ -47,10 +47,22 @@ DEFAULTS = {
 }
 
 
+def _get_config_dir():
+    """Get the config directory — uses AppData on Windows for proper permissions."""
+    import os
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        config_dir = Path(appdata) / "DisplayManager"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir
+    # Fallback: next to the script/exe
+    return Path(__file__).parent
+
+
 class Config:
     def __init__(self, config_dir=None):
         if config_dir is None:
-            config_dir = Path(__file__).parent
+            config_dir = _get_config_dir()
         self._path = Path(config_dir) / "config.json"
         self._lock = threading.Lock()
         self._data = {}

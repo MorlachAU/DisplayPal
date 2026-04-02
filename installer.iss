@@ -56,4 +56,5 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: files; Name: "{app}\config.json"
+Type: files; Name: "{userappdata}\DisplayManager\config.json"
+Type: dirifempty; Name: "{userappdata}\DisplayManager"
