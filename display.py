@@ -218,6 +218,26 @@ def set_brightness(value, monitor_index=None):
 # Combined profile application
 # ============================================================
 
+def nudge_brightness(delta):
+    """Adjust brightness by delta (positive or negative). Returns new value or None."""
+    current = get_brightness()
+    if current is None:
+        return None
+    new_value = max(0, min(100, current + delta))
+    if set_brightness(new_value):
+        return new_value
+    return None
+
+
+def nudge_colour_temperature(delta):
+    """Adjust colour temperature by delta Kelvin. Returns new value."""
+    current = get_colour_temperature()
+    new_value = max(1200, min(6500, current + delta))
+    if set_colour_temperature(new_value):
+        return new_value
+    return None
+
+
 def apply_profile(brightness, colour_temp, transition_ms=0):
     """Apply brightness and colour temperature together.
     If transition_ms > 0, gradually interpolate over that duration."""

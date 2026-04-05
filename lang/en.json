@@ -15,7 +15,19 @@
     "unlock_profile": "Unlock Profile",
     "disco": "Disco Mode",
     "settings": "Settings",
-    "quit": "Quit"
+    "quit": "Quit",
+    "brightness": "Brightness",
+    "colour_temp": "Colour Temp"
+  },
+  "nudge": {
+    "brightness_up_coarse": "+15%  (coarse)",
+    "brightness_up_fine": "+5%  (fine)",
+    "brightness_down_fine": "-5%  (fine)",
+    "brightness_down_coarse": "-15% (coarse)",
+    "colour_warmer_coarse": "Warmer (coarse, -500K)",
+    "colour_warmer_fine": "Warmer (fine, -200K)",
+    "colour_cooler_fine": "Cooler (fine, +200K)",
+    "colour_cooler_coarse": "Cooler (coarse, +500K)"
   },
   "settings": {
     "title": "Display Manager \u2014 Settings",

@@ -700,9 +700,11 @@ class SettingsWindow:
                       font=ctk.CTkFont(weight="bold")).pack(padx=15, pady=(8, 2), anchor="w")
 
         hotkey_info = (
+            "Profiles: Ctrl+Alt+1/2/3/4\n"
             "Quick Dim: Ctrl+Alt+D    Lock: Ctrl+Alt+L\n"
             "Panic (Work): Ctrl+Alt+P    Disco: Ctrl+Alt+Shift+D\n"
-            "Profiles: Ctrl+Alt+1/2/3/4"
+            "Brightness: Ctrl+Alt+Shift+Up/Down (±5%), PgUp/PgDn (±15%)\n"
+            "Colour Temp: Ctrl+Alt+Shift+Left/Right (±200K)"
         )
         ctk.CTkLabel(tab, text=hotkey_info, justify="left", anchor="w",
                       text_color="gray", font=ctk.CTkFont(size=12)).pack(padx=20, anchor="w")

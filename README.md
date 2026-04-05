@@ -27,6 +27,7 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 - **Colour temperature** — Direct gamma ramp control from 1200K (warm amber) to 6500K (neutral daylight)
 - **Refresh rate switching** — Change monitor refresh rate per profile (e.g., 60Hz for work, 100Hz+ for gaming)
 - **System tray app** — Minimal footprint, always one click away
+- **Manual nudges** — Quickly adjust brightness or colour temperature from the tray menu or hotkeys without editing profiles
 
 ### Automation
 - **App-aware profile switching** — Automatically detects games and switches to your Game profile. Uses four detection layers: Windows game registry, Steam/Epic library scanning, fullscreen detection, and DirectX/Vulkan DLL analysis. Works with any GPU (NVIDIA, AMD, Intel). Reverts when you close the game.
@@ -122,6 +123,9 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 | Ctrl+Alt+L | Profile Lock toggle |
 | Ctrl+Alt+P | Panic button (instant Work mode) |
 | Ctrl+Alt+Shift+D | Disco mode (5 second easter egg) |
+| Ctrl+Alt+Shift+Up/Down | Nudge brightness ±5% (fine) |
+| Ctrl+Alt+Shift+PgUp/PgDn | Nudge brightness ±15% (coarse) |
+| Ctrl+Alt+Shift+Left/Right | Nudge colour temperature ±200K |
 
 Profile hotkeys are configurable in Settings > Profiles.
 
@@ -252,6 +256,9 @@ Yes. Enable "Detect productivity apps" in Settings > Apps and it will recognise 
 
 **Does the app phone home or collect data?**
 No. Everything runs locally. The only network call is the optional one-click location detection (via ip-api.com) for setting up sunrise/sunset — and that only happens when you click "Detect" in Settings. Usage stats are stored locally in config.json and never leave your machine.
+
+**What's the difference between nudging and editing a profile?**
+Nudges are **temporary** — they adjust your current display state immediately but don't save. On the next profile switch (manual, scheduled, ambient, or app-aware), the new profile's values take over and your nudges are lost. Profile edits in Settings are **permanent** — they change the stored values for that profile. Use nudges for quick "just right now" tweaks, edit profiles for permanent adjustments.
 
 **How do I know when there's an update?**
 Display Manager checks GitHub for new releases automatically each time it starts. If a newer version is available, you'll see a notification with a Download button that takes you to the releases page. No auto-downloading — you choose when to update.

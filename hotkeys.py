@@ -59,6 +59,22 @@ class HotkeyManager:
         except Exception:
             pass
 
+        # Brightness nudges
+        nudge_map = [
+            ("ctrl+alt+shift+up",        lambda: self._nudge_brightness(5)),
+            ("ctrl+alt+shift+down",      lambda: self._nudge_brightness(-5)),
+            ("ctrl+alt+shift+page up",   lambda: self._nudge_brightness(15)),
+            ("ctrl+alt+shift+page down", lambda: self._nudge_brightness(-15)),
+            ("ctrl+alt+shift+right",     lambda: self._nudge_colour(200)),
+            ("ctrl+alt+shift+left",      lambda: self._nudge_colour(-200)),
+        ]
+        for combo, handler in nudge_map:
+            try:
+                keyboard.add_hotkey(combo, handler, suppress=False)
+                self._registered.append(combo)
+            except Exception:
+                pass
+
     def stop(self):
         """Unregister all hotkeys."""
         for hotkey in self._registered:
@@ -107,3 +123,13 @@ class HotkeyManager:
                 if profile:
                     display.set_colour_temperature(profile.get("colour_temp", 6500))
             threading.Thread(target=restore, daemon=True).start()
+
+    def _nudge_brightness(self, delta):
+        """Nudge brightness via hotkey. Temporary — not saved."""
+        import display
+        display.nudge_brightness(delta)
+
+    def _nudge_colour(self, delta):
+        """Nudge colour temperature via hotkey. Temporary — not saved."""
+        import display
+        display.nudge_colour_temperature(delta)

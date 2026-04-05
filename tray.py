@@ -131,6 +131,28 @@ class TrayApp:
             checked=lambda item: self.config.get("ambient_mode", False),
         ))
 
+        # Brightness submenu
+        items.append(pystray.MenuItem(
+            "Brightness",
+            pystray.Menu(
+                pystray.MenuItem("+15%  (coarse)", lambda i, it: self._nudge_brightness(15)),
+                pystray.MenuItem("+5%  (fine)",   lambda i, it: self._nudge_brightness(5)),
+                pystray.MenuItem("-5%  (fine)",   lambda i, it: self._nudge_brightness(-5)),
+                pystray.MenuItem("-15% (coarse)", lambda i, it: self._nudge_brightness(-15)),
+            )
+        ))
+
+        # Colour temperature submenu (warmer = lower Kelvin, cooler = higher)
+        items.append(pystray.MenuItem(
+            "Colour Temp",
+            pystray.Menu(
+                pystray.MenuItem("Warmer (coarse, -500K)", lambda i, it: self._nudge_colour(-500)),
+                pystray.MenuItem("Warmer (fine, -200K)",   lambda i, it: self._nudge_colour(-200)),
+                pystray.MenuItem("Cooler (fine, +200K)",   lambda i, it: self._nudge_colour(200)),
+                pystray.MenuItem("Cooler (coarse, +500K)", lambda i, it: self._nudge_colour(500)),
+            )
+        ))
+
         lock_text = "Unlock Profile" if self.pm.is_locked() else "Lock Profile"
 
         items.extend([
@@ -151,6 +173,30 @@ class TrayApp:
             # Manual switch always forces (bypasses lock)
             self.pm.switch(profile_name, force=True)
         return handler
+
+    def _nudge_brightness(self, delta):
+        """Nudge brightness by delta. Temporary — not saved to profile."""
+        import display
+        new_value = display.nudge_brightness(delta)
+        if new_value is not None and self._icon:
+            active = self.pm.get_active()
+            self._icon.title = f"Display Manager - {active} | Brightness {new_value}%"
+            try:
+                self._icon.update_menu()
+            except Exception:
+                pass
+
+    def _nudge_colour(self, delta):
+        """Nudge colour temperature by delta Kelvin. Temporary — not saved to profile."""
+        import display
+        new_value = display.nudge_colour_temperature(delta)
+        if new_value is not None and self._icon:
+            active = self.pm.get_active()
+            self._icon.title = f"Display Manager - {active} | {new_value}K"
+            try:
+                self._icon.update_menu()
+            except Exception:
+                pass
 
     def _on_ambient_click(self, icon, item):
         """Toggle ambient mode on/off. Enabling unlocks the profile so it can adjust."""
