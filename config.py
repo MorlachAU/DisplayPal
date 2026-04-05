@@ -1,5 +1,5 @@
 """
-Display Manager — Configuration
+DisplayPal — Configuration
 Thread-safe JSON config with defaults and deep-merge on load.
 """
 
@@ -48,12 +48,22 @@ DEFAULTS = {
 
 
 def _get_config_dir():
-    """Get the config directory — uses AppData on Windows for proper permissions."""
+    """Get the config directory — uses AppData on Windows for proper permissions.
+    Migrates from legacy DisplayManager folder if present."""
     import os
+    import shutil
     appdata = os.environ.get("APPDATA")
     if appdata:
-        config_dir = Path(appdata) / "DisplayManager"
-        config_dir.mkdir(parents=True, exist_ok=True)
+        config_dir = Path(appdata) / "DisplayPal"
+        legacy_dir = Path(appdata) / "DisplayManager"
+        # One-time migration from DisplayManager -> DisplayPal
+        if legacy_dir.exists() and not config_dir.exists():
+            try:
+                shutil.copytree(legacy_dir, config_dir)
+            except Exception:
+                config_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            config_dir.mkdir(parents=True, exist_ok=True)
         return config_dir
     # Fallback: next to the script/exe
     return Path(__file__).parent

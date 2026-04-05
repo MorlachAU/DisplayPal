@@ -1,5 +1,5 @@
 """
-Display Manager — App-Aware Detection Engine
+DisplayPal — App-Aware Detection Engine
 Detects running games and mapped applications to auto-switch profiles.
 
 Detection layers (GPU-vendor independent):

@@ -5,7 +5,7 @@
     "author": "MouseWheel Digital"
   },
   "app": {
-    "name": "Display Manager",
+    "name": "DisplayPal",
     "by": "by MouseWheel Digital"
   },
   "tray": {
@@ -30,7 +30,7 @@
     "colour_cooler_coarse": "Cooler (coarse, +500K)"
   },
   "settings": {
-    "title": "Display Manager \u2014 Settings",
+    "title": "DisplayPal \u2014 Settings",
     "tabs": {
       "profiles": "Profiles",
       "schedule": "Schedule",
@@ -111,7 +111,7 @@
     "monitors": "{count} monitor(s)",
     "language": "Language",
     "donate": "Buy Me a Coffee",
-    "version": "Display Manager v1.1 \u2014 MouseWheel Digital"
+    "version": "DisplayPal v1.2.0 \u2014 MouseWheel Digital"
   },
   "stats": {
     "title": "Usage Stats",
@@ -121,13 +121,13 @@
     "no_data": "No data yet"
   },
   "first_run": {
-    "welcome": "Welcome to Display Manager",
+    "welcome": "Welcome to DisplayPal",
     "checking": "Running system checks...",
     "ddc_ok": "Brightness control working ({count} display(s)). Current: {brightness}%",
     "ddc_fail": "No displays found. Check DDC/CI is enabled in your monitor OSD settings.",
     "refresh_rates": "Available: {rates} Hz",
     "refresh_fail": "Could not enumerate",
-    "flux_running": "Running \u2014 please close f.lux to avoid conflicts.\nDisplay Manager replaces f.lux for colour temperature.",
+    "flux_running": "Running \u2014 please close f.lux to avoid conflicts.\nDisplayPal replaces f.lux for colour temperature.",
     "flux_ok": "Not running (good)",
     "location_not_set": "Not set \u2014 go to Settings > Schedule > Detect\nto enable sunrise/sunset auto-switching",
     "location_set": "Set to {lat}, {lon}",

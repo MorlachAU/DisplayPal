@@ -1,5 +1,5 @@
 """
-Display Manager — Internationalization (i18n)
+DisplayPal — Internationalization (i18n)
 Simple JSON-based translation system.
 """
 

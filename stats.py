@@ -1,5 +1,5 @@
 """
-Display Manager — Stats Tracker
+DisplayPal — Stats Tracker
 Tracks time spent in each profile per day.
 """
 

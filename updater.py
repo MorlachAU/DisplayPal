@@ -1,5 +1,5 @@
 """
-Display Manager — Update Checker
+DisplayPal — Update Checker
 Checks GitHub releases for new versions on startup.
 """
 
@@ -7,8 +7,8 @@ import threading
 import urllib.request
 import json
 
-CURRENT_VERSION = "1.1"
-GITHUB_REPO = "MorlachAU/DisplayManager"
+CURRENT_VERSION = "1.2.0"
+GITHUB_REPO = "MorlachAU/DisplayPal"
 RELEASES_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 
 
@@ -29,7 +29,7 @@ def check_for_update(callback):
         try:
             req = urllib.request.Request(
                 RELEASES_URL,
-                headers={"User-Agent": "DisplayManager-UpdateCheck"}
+                headers={"User-Agent": "DisplayPal-UpdateCheck"}
             )
             response = urllib.request.urlopen(req, timeout=10)
             data = json.loads(response.read().decode())

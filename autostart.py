@@ -1,5 +1,5 @@
 """
-Display Manager — Windows Auto-Start
+DisplayPal — Windows Auto-Start
 Manages the registry Run key for starting with Windows.
 """
 
@@ -7,7 +7,8 @@ import sys
 import winreg
 from pathlib import Path
 
-APP_NAME = "DisplayManager"
+APP_NAME = "DisplayPal"
+LEGACY_APP_NAME = "DisplayManager"
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 
 
@@ -62,8 +63,22 @@ def disable_autostart():
         return False
 
 
+def _cleanup_legacy():
+    """Remove the legacy DisplayManager autostart entry if present."""
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, RUN_KEY, 0, winreg.KEY_SET_VALUE)
+        try:
+            winreg.DeleteValue(key, LEGACY_APP_NAME)
+        except FileNotFoundError:
+            pass
+        winreg.CloseKey(key)
+    except OSError:
+        pass
+
+
 def sync_autostart(config):
-    """Sync registry state with config setting."""
+    """Sync registry state with config setting. Also removes legacy entry."""
+    _cleanup_legacy()
     should_autostart = config.get("auto_start", False)
     if should_autostart:
         enable_autostart()

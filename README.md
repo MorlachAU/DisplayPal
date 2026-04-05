@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Display Manager by MouseWheel Digital" width="100%">
+  <img src="assets/banner.png" alt="DisplayPal by MouseWheel Digital" width="100%">
 </p>
 
 <p align="center">
@@ -10,11 +10,11 @@
   <a href="https://buymeacoffee.com/mousewheeldigital"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me A Coffee"></a>
 </p>
 
-# Display Manager
+# DisplayPal
 
-A Windows system tray application that manages display brightness, colour temperature, and refresh rate across switchable profiles. Think of it as a smart display profile manager — set up your preferred screen settings for different activities and switch between them instantly.
+**Your display's best mate.** A Windows system tray app that manages brightness, colour temperature, and refresh rate across switchable profiles. Set up your preferred screen settings for work, coding, gaming, and movies — then switch between them instantly, or let DisplayPal do it for you automatically.
 
-Built for anyone who switches between work, coding, and gaming on the same monitor and wants their display to adapt automatically.
+Built for anyone who switches between different activities on the same monitor and wants their display to adapt without fuss.
 
 ---
 
@@ -63,17 +63,17 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 - **Windows 10 or 11**
 - Works on **laptops** (built-in screen via WMI) and **external monitors** (via DDC/CI)
   - For external monitors, DDC/CI must be enabled in the monitor's OSD settings
-- **f.lux must be closed** if installed — Display Manager replaces f.lux for colour temperature control
+- **f.lux must be closed** if installed — DisplayPal replaces f.lux for colour temperature control
 
 ---
 
 ## Installation
 
-**No additional software required.** Display Manager is fully self-contained — it controls your display directly through Windows APIs. No need to install f.lux, ClickMonitorDDC, Monitorian, or any other display utility.
+**No additional software required.** DisplayPal is fully self-contained — it controls your display directly through Windows APIs. No need to install f.lux, ClickMonitorDDC, Monitorian, or any other display utility.
 
 ### Option A: Windows Installer (recommended)
 
-1. Download `DisplayManager_Setup_1.1.exe` from [Releases](../../releases)
+1. Download `DisplayPal_Setup_1.2.0.exe` from [Releases](../../releases)
 2. Run the installer — choose install location, desktop icon, and auto-start options
 3. Launch from Start Menu or desktop shortcut
 4. The first-run dialog will check your system and guide you through setup
@@ -84,9 +84,9 @@ Built for anyone who switches between work, coding, and gaming on the same monit
 
 1. Download the portable zip from [Releases](../../releases)
 2. Extract to a folder of your choice
-3. Run `DisplayManager.exe`
+3. Run `DisplayPal.exe`
 
-### Option B: Run from source
+### Option C: Run from source
 
 1. Clone this repository
 2. Install Python 3.10+
@@ -218,17 +218,17 @@ Settings are stored in `config.json` alongside the executable (or `main.py` if r
 
 ## FAQ
 
-**Do I need any other software to use Display Manager?**
-No. Display Manager is completely self-contained and controls your display directly through Windows APIs. You do not need f.lux, Monitorian, Twinkle Tray, ClickMonitorDDC, or any other display utility. If you have f.lux installed, you should close or uninstall it — both apps control the same gamma ramp and will conflict with each other.
+**Do I need any other software to use DisplayPal?**
+No. DisplayPal is completely self-contained and controls your display directly through Windows APIs. You do not need f.lux, Monitorian, Twinkle Tray, ClickMonitorDDC, or any other display utility. If you have f.lux installed, you should close or uninstall it — both apps control the same gamma ramp and will conflict with each other.
 
 **Does it work on laptops?**
 Yes. Brightness control works on laptop screens via WMI and on external monitors via DDC/CI. Colour temperature and refresh rate work on all displays.
 
 **What happens if I plug in a second monitor?**
-Display Manager detects all connected displays automatically. Brightness changes are applied to all monitors. Restart the app after connecting a new display for it to be detected.
+DisplayPal detects all connected displays automatically. Brightness changes are applied to all monitors. Restart the app after connecting a new display for it to be detected.
 
 **Why does my screen go black briefly when switching to Game mode?**
-This is standard Windows behaviour, not a Display Manager issue. When your profiles use different refresh rates (e.g., 60Hz for Work, 100Hz for Game), Windows performs a full display mode change which momentarily blanks the screen. This happens with any application that changes the refresh rate. Switching between profiles with the same refresh rate is instant with no flash.
+This is standard Windows behaviour, not a DisplayPal issue. When your profiles use different refresh rates (e.g., 60Hz for Work, 100Hz for Game), Windows performs a full display mode change which momentarily blanks the screen. This happens with any application that changes the refresh rate. Switching between profiles with the same refresh rate is instant with no flash.
 
 **What does the red dot on the tray icon mean?**
 Your profile is locked. This happens automatically when you manually select a profile (to prevent scheduled switches from overriding your choice). Right-click the tray icon and click "Unlock Profile" or press Ctrl+Alt+L to return to automatic mode.
@@ -249,7 +249,7 @@ Press Ctrl+Alt+P and it instantly switches to Work mode. Useful for... situation
 Yes. Press Ctrl+Alt+Shift+D for 5 seconds of rapidly cycling colour temperatures. It's an easter egg. Your display settings are restored automatically after it finishes.
 
 **How does game detection work?**
-Display Manager uses four detection methods that work with any GPU vendor (NVIDIA, AMD, Intel): (1) Windows GameConfigStore registry — the OS already tracks what it considers a game, (2) Steam and Epic library scanning for installed game executables, (3) fullscreen + borderless window detection, and (4) checking if the foreground process has DirectX or Vulkan rendering DLLs loaded. When a game is detected, it auto-switches to your chosen Game profile. When you close the game, it reverts to whatever profile was active before.
+DisplayPal uses four detection methods that work with any GPU vendor (NVIDIA, AMD, Intel): (1) Windows GameConfigStore registry — the OS already tracks what it considers a game, (2) Steam and Epic library scanning for installed game executables, (3) fullscreen + borderless window detection, and (4) checking if the foreground process has DirectX or Vulkan rendering DLLs loaded. When a game is detected, it auto-switches to your chosen Game profile. When you close the game, it reverts to whatever profile was active before.
 
 **Can it detect non-game apps too?**
 Yes. Enable "Detect productivity apps" in Settings > Apps and it will recognise ~50 common apps including Microsoft Office, VS Code, Notepad++, browsers, Teams, Slack, Discord, Zoom, terminals, design tools, and more. You can also add custom rules for any app not on the built-in list. Detection priority: Custom rules > Games > Productivity apps.
@@ -261,10 +261,10 @@ No. Everything runs locally. The only network call is the optional one-click loc
 Nudges are **temporary** — they adjust your current display state immediately but don't save. On the next profile switch (manual, scheduled, ambient, or app-aware), the new profile's values take over and your nudges are lost. Profile edits in Settings are **permanent** — they change the stored values for that profile. Use nudges for quick "just right now" tweaks, edit profiles for permanent adjustments.
 
 **How do I know when there's an update?**
-Display Manager checks GitHub for new releases automatically each time it starts. If a newer version is available, you'll see a notification with a Download button that takes you to the releases page. No auto-downloading — you choose when to update.
+DisplayPal checks GitHub for new releases automatically each time it starts. If a newer version is available, you'll see a notification with a Download button that takes you to the releases page. No auto-downloading — you choose when to update.
 
 **What happens if the app crashes?**
-On next launch, Display Manager re-applies the last active profile, which resets the gamma ramp to the correct state. If the gamma ramp is stuck from a crash, just restart the app.
+On next launch, DisplayPal re-applies the last active profile, which resets the gamma ramp to the correct state. If the gamma ramp is stuck from a crash, just restart the app.
 
 ---
 
@@ -274,10 +274,10 @@ To create a standalone executable:
 
 ```
 pip install pyinstaller
-pyinstaller --noconfirm --windowed --name "DisplayManager" --icon "assets/icon.ico" --add-data "assets;assets" --add-data "lang;lang" --collect-all customtkinter --hidden-import pystray._win32 main.py
+pyinstaller --noconfirm --windowed --name "DisplayPal" --icon "assets/icon.ico" --add-data "assets;assets" --add-data "lang;lang" --collect-all customtkinter --hidden-import pystray._win32 main.py
 ```
 
-The output will be in `dist/DisplayManager/`. Zip the entire folder for the portable distribution.
+The output will be in `dist/DisplayPal/`. Zip the entire folder for the portable distribution.
 
 To build the Windows installer, install [Inno Setup 6](https://jrsoftware.org/isinfo.php) then compile `installer.iss`:
 
@@ -308,7 +308,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## Support the Project
 
-Display Manager is free and open source. If you find it useful and want to support development:
+DisplayPal is free and open source. If you find it useful and want to support development:
 
 <a href="https://buymeacoffee.com/mousewheeldigital"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-Support-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me A Coffee"></a>
 

@@ -1,5 +1,5 @@
 """
-Display Manager — Profile Management
+DisplayPal — Profile Management
 Switches between named profiles, applying display settings.
 """
 

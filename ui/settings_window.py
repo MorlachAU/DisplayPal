@@ -1,5 +1,5 @@
 """
-Display Manager — Settings Window
+DisplayPal — Settings Window
 customtkinter tabbed settings UI.
 """
 
@@ -25,7 +25,7 @@ class SettingsWindow:
         ctk.set_default_color_theme("blue")
         self._root = ctk.CTk()
         self._root.withdraw()
-        self._root.title("Display Manager")
+        self._root.title("DisplayPal")
         return self._root
 
     def show(self):
@@ -44,12 +44,12 @@ class SettingsWindow:
                 logo = logo.resize((32, 32), Image.LANCZOS)
                 self._header_logo_img = ImageTk.PhotoImage(logo)
                 ctk.CTkLabel(parent, image=self._header_logo_img, text="").pack(side="left", padx=(5, 8))
-            ctk.CTkLabel(parent, text="Display Manager",
+            ctk.CTkLabel(parent, text="DisplayPal",
                           font=ctk.CTkFont(size=16, weight="bold")).pack(side="left")
             ctk.CTkLabel(parent, text="by MouseWheel Digital",
                           text_color="gray", font=ctk.CTkFont(size=11)).pack(side="left", padx=(8, 0))
         except Exception:
-            ctk.CTkLabel(parent, text="Display Manager",
+            ctk.CTkLabel(parent, text="DisplayPal",
                           font=ctk.CTkFont(size=16, weight="bold")).pack(side="left", padx=5)
 
     def _create_or_focus(self):
@@ -63,7 +63,7 @@ class SettingsWindow:
     def _create_window(self):
         """Build the settings window."""
         self._window = ctk.CTkToplevel(self._root)
-        self._window.title("Display Manager — Settings")
+        self._window.title("DisplayPal — Settings")
         self._window.geometry("580x650")
         self._window.resizable(False, False)
         self._window.attributes("-topmost", True)
@@ -726,7 +726,7 @@ class SettingsWindow:
                        command=self._refresh_status).pack(padx=10, pady=3, anchor="w")
 
         # Version
-        ctk.CTkLabel(tab, text="v1.1 — see About tab for more",
+        ctk.CTkLabel(tab, text="v1.2.0 — see About tab for more",
                       text_color="gray", font=ctk.CTkFont(size=11)).pack(padx=15, pady=(3, 0), anchor="w")
 
     def _open_donate(self):
@@ -858,9 +858,9 @@ class SettingsWindow:
             pass
 
         # App name and version
-        ctk.CTkLabel(tab, text="Display Manager",
+        ctk.CTkLabel(tab, text="DisplayPal",
                       font=ctk.CTkFont(size=22, weight="bold")).pack(pady=(5, 0))
-        ctk.CTkLabel(tab, text="Version 1.1",
+        ctk.CTkLabel(tab, text="Version 1.2.0",
                       text_color="gray", font=ctk.CTkFont(size=13)).pack(pady=(0, 5))
 
         # Branding
@@ -895,10 +895,10 @@ class SettingsWindow:
                        command=self._copy_feedback_email).pack(side="left", padx=8)
 
         # GitHub
-        ctk.CTkButton(tab, text="GitHub: MorlachAU/DisplayManager", width=240,
+        ctk.CTkButton(tab, text="GitHub: MorlachAU/DisplayPal", width=240,
                        fg_color="transparent", border_width=1, border_color="gray",
                        command=lambda: __import__("webbrowser").open(
-                           "https://github.com/MorlachAU/DisplayManager")).pack(pady=(10, 5))
+                           "https://github.com/MorlachAU/DisplayPal")).pack(pady=(10, 5))
 
         # Credits
         ctk.CTkLabel(tab, text="Built with the assistance of Claude Code by Anthropic",

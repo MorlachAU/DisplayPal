@@ -1,5 +1,5 @@
 """
-Display Manager — Global Hotkeys
+DisplayPal — Global Hotkeys
 Registers configurable hotkeys for profile switching, quick dim, and lock.
 """
 

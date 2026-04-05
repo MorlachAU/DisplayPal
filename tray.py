@@ -1,5 +1,5 @@
 """
-Display Manager — System Tray
+DisplayPal — System Tray
 pystray-based tray icon with profile switching menu and per-profile colours.
 """
 
@@ -180,7 +180,7 @@ class TrayApp:
         new_value = display.nudge_brightness(delta)
         if new_value is not None and self._icon:
             active = self.pm.get_active()
-            self._icon.title = f"Display Manager - {active} | Brightness {new_value}%"
+            self._icon.title = f"DisplayPal - {active} | Brightness {new_value}%"
             try:
                 self._icon.update_menu()
             except Exception:
@@ -192,7 +192,7 @@ class TrayApp:
         new_value = display.nudge_colour_temperature(delta)
         if new_value is not None and self._icon:
             active = self.pm.get_active()
-            self._icon.title = f"Display Manager - {active} | {new_value}K"
+            self._icon.title = f"DisplayPal - {active} | {new_value}K"
             try:
                 self._icon.update_menu()
             except Exception:
@@ -244,7 +244,7 @@ class TrayApp:
         """Start the tray icon in a daemon thread."""
         active = self.pm.get_active()
         self._icon = pystray.Icon(
-            "DisplayManager",
+            "DisplayPal",
             self._get_icon_for_profile(active),
             title=self._build_title(active),
             menu=pystray.Menu(lambda: self._build_menu_items()),
@@ -262,7 +262,7 @@ class TrayApp:
 
     def _build_title(self, profile_name):
         locked = " [LOCKED]" if self.pm.is_locked() else ""
-        return f"Display Manager - {profile_name}{locked}"
+        return f"DisplayPal - {profile_name}{locked}"
 
     def update_tooltip(self, profile_name):
         """Update tray tooltip, icon, and force menu refresh when profile changes."""
@@ -279,7 +279,7 @@ class TrayApp:
                 try:
                     self._icon.notify(
                         f"Switched to {profile_name}",
-                        "Display Manager"
+                        "DisplayPal"
                     )
                 except Exception:
                     pass

@@ -1,5 +1,5 @@
 """
-Display Manager — Main Entry Point
+DisplayPal — Main Entry Point
 Orchestrates all threads: tray, hotkeys, scheduler, watchdog, UI.
 """
 
@@ -147,7 +147,7 @@ def _show_update_notification(root, tray, version, url):
     try:
         tray._icon.notify(
             f"Version {version} is available",
-            "Display Manager Update"
+            "DisplayPal Update"
         )
     except Exception:
         pass
@@ -162,7 +162,7 @@ def _show_update_notification(root, tray, version, url):
     ctk.CTkLabel(dialog, text="Update Available",
                   font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(15, 5))
     from updater import CURRENT_VERSION
-    ctk.CTkLabel(dialog, text=f"Display Manager {version} is available.\nYou are running v{CURRENT_VERSION}.",
+    ctk.CTkLabel(dialog, text=f"DisplayPal {version} is available.\nYou are running v{CURRENT_VERSION}.",
                   text_color="gray").pack(pady=(0, 10))
 
     btnf = ctk.CTkFrame(dialog, fg_color="transparent")
@@ -179,7 +179,7 @@ def _first_run_dialog(root, config):
     import customtkinter as ctk
 
     dialog = ctk.CTkToplevel(root)
-    dialog.title("Display Manager — Welcome")
+    dialog.title("DisplayPal — Welcome")
     dialog.geometry("460x440")
     dialog.resizable(False, False)
     dialog.attributes("-topmost", True)
@@ -199,7 +199,7 @@ def _first_run_dialog(root, config):
         pass
     title_frame = ctk.CTkFrame(header, fg_color="transparent")
     title_frame.pack(side="left")
-    ctk.CTkLabel(title_frame, text="Display Manager",
+    ctk.CTkLabel(title_frame, text="DisplayPal",
                   font=ctk.CTkFont(size=18, weight="bold")).pack(anchor="w")
     ctk.CTkLabel(title_frame, text="by MouseWheel Digital",
                   text_color="gray", font=ctk.CTkFont(size=12)).pack(anchor="w")
@@ -240,7 +240,7 @@ def _first_run_dialog(root, config):
 
     if flux_running:
         checks.append(("f.lux", "Running — please close f.lux to avoid conflicts.\n"
-                        "Display Manager replaces f.lux for colour temperature.", "orange"))
+                        "DisplayPal replaces f.lux for colour temperature.", "orange"))
     else:
         checks.append(("f.lux", "Not running (good)", "green"))
 

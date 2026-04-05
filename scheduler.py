@@ -1,5 +1,5 @@
 """
-Display Manager — Time-Based Scheduler
+DisplayPal — Time-Based Scheduler
 Switches profiles based on fixed times or sunrise/sunset.
 """
 

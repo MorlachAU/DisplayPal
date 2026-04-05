@@ -1,5 +1,5 @@
 """
-Display Manager — Hardware Control
+DisplayPal — Hardware Control
 DDC/CI brightness via monitorcontrol + colour temperature via gamma ramp.
 """
 

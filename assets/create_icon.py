@@ -1,4 +1,4 @@
-"""Generate a simple tray icon for Display Manager."""
+"""Generate a simple tray icon for DisplayPal."""
 from PIL import Image, ImageDraw, ImageFont
 
 def create_icon(size=256):

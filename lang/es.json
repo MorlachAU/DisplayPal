@@ -5,7 +5,7 @@
     "author": "Machine translated — contributions welcome"
   },
   "app": {
-    "name": "Display Manager",
+    "name": "DisplayPal",
     "by": "por MouseWheel Digital"
   },
   "tray": {
@@ -18,7 +18,7 @@
     "quit": "Salir"
   },
   "settings": {
-    "title": "Display Manager \u2014 Configuracion",
+    "title": "DisplayPal \u2014 Configuracion",
     "tabs": {
       "profiles": "Perfiles",
       "schedule": "Horario",
@@ -99,7 +99,7 @@
     "monitors": "{count} monitor(es)",
     "language": "Idioma",
     "donate": "Invitame un cafe",
-    "version": "Display Manager v1.1 \u2014 MouseWheel Digital"
+    "version": "DisplayPal v1.2.0 \u2014 MouseWheel Digital"
   },
   "stats": {
     "title": "Estadisticas de uso",
@@ -109,7 +109,7 @@
     "no_data": "Sin datos aun"
   },
   "first_run": {
-    "welcome": "Bienvenido a Display Manager",
+    "welcome": "Bienvenido a DisplayPal",
     "checking": "Ejecutando verificaciones del sistema...",
     "tip": "Consejo: Clic derecho en el icono de la bandeja para cambiar perfiles\no presione Ctrl+Alt+1/2/3 para cambio rapido.",
     "got_it": "Entendido!",
