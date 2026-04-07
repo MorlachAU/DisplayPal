@@ -153,21 +153,30 @@ class TrayApp:
             )
         ))
 
-        # Resolution submenu — lists available resolutions with checkmark on current
+        # Resolution submenu — adapts to single vs multi-monitor
         import display
-        current_res = display.get_resolution()
-        available_res = display.get_available_resolutions(min_height=720)
-        res_items = []
-        for w, h in available_res:
-            label = f"{w} x {h}"
-            res_items.append(pystray.MenuItem(
-                label,
-                self._make_resolution_handler(w, h),
-                checked=lambda item, rw=w, rh=h: display.get_resolution() == (rw, rh),
-                radio=True,
-            ))
-        if res_items:
-            items.append(pystray.MenuItem("Resolution", pystray.Menu(*res_items)))
+        active_displays = display.get_active_display_devices()
+
+        if len(active_displays) <= 1:
+            # Single display — flat list
+            device_name = active_displays[0][0] if active_displays else None
+            res_items = self._build_resolution_items(device_name)
+            if res_items:
+                items.append(pystray.MenuItem("Resolution", pystray.Menu(*res_items)))
+        else:
+            # Multi-monitor — per-display submenus
+            display_subs = []
+            for dev_name, dev_desc in active_displays:
+                current = display.get_resolution(dev_name)
+                label = f"{dev_desc}" if dev_desc else dev_name
+                if current:
+                    label += f" ({current[0]}x{current[1]})"
+                sub_items = self._build_resolution_items(dev_name)
+                if sub_items:
+                    display_subs.append(
+                        pystray.MenuItem(label, pystray.Menu(*sub_items)))
+            if display_subs:
+                items.append(pystray.MenuItem("Resolution", pystray.Menu(*display_subs)))
 
         lock_text = "Unlock Profile" if self.pm.is_locked() else "Lock Profile"
 
@@ -226,11 +235,30 @@ class TrayApp:
         """PANIC! Instantly switch to Work and close settings."""
         self.pm.switch("Work", force=True)
 
-    def _make_resolution_handler(self, width, height):
+    def _build_resolution_items(self, device_name):
+        """Build resolution menu items for a specific display."""
+        import display
+        available = display.get_available_resolutions(device_name, min_height=720)
+        native = display.get_native_resolution(device_name)
+        res_items = []
+        for w, h in available:
+            label = f"{w} x {h}"
+            if native and (w, h) == native:
+                label += "  (Recommended)"
+            res_items.append(pystray.MenuItem(
+                label,
+                self._make_resolution_handler(w, h, device_name),
+                checked=lambda item, dn=device_name, rw=w, rh=h: (
+                    display.get_resolution(dn) == (rw, rh)),
+                radio=True,
+            ))
+        return res_items
+
+    def _make_resolution_handler(self, width, height, device_name=None):
         """Create a handler for switching to a specific resolution."""
         def handler(icon, item):
             import display
-            display.set_resolution(width, height)
+            display.set_resolution(width, height, device_name)
         return handler
 
     def _on_lock_click(self, icon, item):

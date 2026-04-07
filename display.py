@@ -355,45 +355,74 @@ def set_refresh_rate(hz):
 
 
 # ============================================================
-# Resolution via Windows Display Settings API
+# Resolution via Windows Display Settings API (multi-monitor)
 # ============================================================
 
 DM_PELSWIDTH = 0x80000
 DM_PELSHEIGHT = 0x100000
 
+_ChangeDisplaySettingsExW = _user32.ChangeDisplaySettingsExW
 
-def get_resolution():
-    """Get current display resolution as (width, height)."""
+
+def get_active_display_devices():
+    """Return list of (device_name, description) for all active displays."""
+    displays = []
+    dd = DISPLAY_DEVICE()
+    dd.cb = ctypes.sizeof(DISPLAY_DEVICE)
+    i = 0
+    while _user32.EnumDisplayDevicesW(None, i, ctypes.byref(dd), 0):
+        if dd.StateFlags & 1:  # DISPLAY_DEVICE_ATTACHED_TO_DESKTOP
+            displays.append((dd.DeviceName.strip(), dd.DeviceString.strip()))
+        i += 1
+    return displays
+
+
+def get_resolution(device_name=None):
+    """Get current resolution as (width, height) for a specific display.
+    If device_name is None, uses the primary display."""
     dm = DEVMODE()
     dm.dmSize = ctypes.sizeof(DEVMODE)
-    if _user32.EnumDisplaySettingsW(None, ENUM_CURRENT_SETTINGS, ctypes.byref(dm)):
+    if _user32.EnumDisplaySettingsW(device_name, ENUM_CURRENT_SETTINGS, ctypes.byref(dm)):
         return (dm.dmPelsWidth, dm.dmPelsHeight)
     return None
 
 
-def get_available_resolutions(min_height=720):
-    """Get list of supported resolutions, filtered to min_height and above."""
+def get_available_resolutions(device_name=None, min_height=720):
+    """Get list of supported resolutions for a specific display.
+    If device_name is None, uses the primary display.
+    Returns list of (width, height) sorted highest first."""
     resolutions = set()
     dm = DEVMODE()
     dm.dmSize = ctypes.sizeof(DEVMODE)
     i = 0
-    while _user32.EnumDisplaySettingsW(None, i, ctypes.byref(dm)):
+    while _user32.EnumDisplaySettingsW(device_name, i, ctypes.byref(dm)):
         if dm.dmPelsHeight >= min_height:
             resolutions.add((dm.dmPelsWidth, dm.dmPelsHeight))
         i += 1
     return sorted(resolutions, reverse=True)
 
 
-def set_resolution(width, height):
-    """Set display resolution. Returns True on success."""
+def get_native_resolution(device_name=None):
+    """Get the native (highest) resolution for a display — this is the recommended one."""
+    resolutions = get_available_resolutions(device_name, min_height=0)
+    return resolutions[0] if resolutions else None
+
+
+def set_resolution(width, height, device_name=None):
+    """Set display resolution. Returns True on success.
+    If device_name is None, changes the primary display."""
     dm = DEVMODE()
     dm.dmSize = ctypes.sizeof(DEVMODE)
-    if not _user32.EnumDisplaySettingsW(None, ENUM_CURRENT_SETTINGS, ctypes.byref(dm)):
+    if not _user32.EnumDisplaySettingsW(device_name, ENUM_CURRENT_SETTINGS, ctypes.byref(dm)):
         return False
     dm.dmPelsWidth = width
     dm.dmPelsHeight = height
     dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT
-    result = _user32.ChangeDisplaySettingsW(ctypes.byref(dm), CDS_UPDATEREGISTRY)
+    if device_name:
+        result = _ChangeDisplaySettingsExW(
+            device_name, ctypes.byref(dm), None, CDS_UPDATEREGISTRY, None)
+    else:
+        result = _user32.ChangeDisplaySettingsW(ctypes.byref(dm), CDS_UPDATEREGISTRY)
     return result == DISP_CHANGE_SUCCESSFUL
 
 
